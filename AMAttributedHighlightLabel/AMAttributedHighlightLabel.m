@@ -89,7 +89,7 @@
     self.text = string;
     NSArray *words = [string componentsSeparatedByString:@" "];
     NSError *error;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"\\(@|#)([\\w]+)" options:NSRegularExpressionCaseInsensitive error:&error];
     
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:string];
     [attrString addAttribute:NSForegroundColorAttributeName value:textColor range:[string rangeOfString:string]];
@@ -135,32 +135,8 @@
         
         startLocation += [word length];
     }
-    if(SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"6.0"))
-    {
-        // iOS 6 supports attributed strings on UILabel
-        self.attributedText = attrString;
-    }
-    else
-    {
-        CGContextRef context = UIGraphicsGetCurrentContext();
 
-        CGContextSetTextMatrix(context, CGAffineTransformIdentity);
-        CGContextTranslateCTM(context, 0, self.bounds.size.height);
-        CGContextScaleCTM(context, 1.0, -1.0);
-        
-        CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, self.bounds );
-
-        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)attrString);
-        CTFrameRef frame = CTFramesetterCreateFrame(framesetter,
-                                                    CFRangeMake(0, [attrString length]), path, NULL);
-        
-        CTFrameDraw(frame, context);
-
-        CFRelease(frame);
-        CFRelease(path);
-        CFRelease(framesetter);
-    }
+    self.attributedText = attrString;
 }
 
 // Thank you, Erik Andersson!
