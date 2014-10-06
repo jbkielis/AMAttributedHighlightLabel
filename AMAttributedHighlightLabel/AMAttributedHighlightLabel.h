@@ -28,6 +28,4 @@
 
 @property (nonatomic, weak) id <AMAttributedHighlightLabelDelegate> delegate;
 
-- (void)setString:(NSString *)string;
-
 @end

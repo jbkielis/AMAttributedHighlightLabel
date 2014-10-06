@@ -23,10 +23,14 @@
 {
     self = [super init];
     if (self) {
+        self.lineBreakMode = NSLineBreakByWordWrapping;
+        self.numberOfLines = 0;
+        self.userInteractionEnabled = YES;
+
         // Initialization code
         self.textColor = [UIColor blackColor];
-        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
-        self.selectedLinkTextColor = [UIColor blackColor];
+        self.linkTextColor = [UIColor colorWithRed:255.0 / 255.0 green:103.0 / 255.0 blue:65.0 / 255.0 alpha:1.0];
+        self.selectedLinkTextColor = [self.linkTextColor colorWithAlphaComponent:0.20f];
 
         self.touchableWords = [[NSMutableArray alloc] init];
         self.touchableLocations = [[NSMutableArray alloc] init];
@@ -38,9 +42,9 @@
     return self;
 }
 
-- (void)setString:(NSString *)string
+- (void)setText:(NSString *)text
 {
-    if ([self.text isEqualToString:string]) {
+    if ([self.text isEqualToString:text]) {
         return;
     }
 
@@ -49,26 +53,26 @@
     [self.touchableLocations removeAllObjects];
     self.currentSelectedString = nil;
 
-    self.text = string;
+    [super setText:text];
 
-    if (!self.shouldHighlightLabel) {
+    if (text == nil || !self.shouldHighlightLabel) {
         return;
     }
 
-    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:string];
-    [attrString addAttribute:NSForegroundColorAttributeName value:self.textColor range:[string rangeOfString:string]];
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:text];
+    [attrString addAttribute:NSForegroundColorAttributeName value:self.textColor range:[text rangeOfString:text]];
 
     if (self.detectWords.count > 0) {
         [self setAttributedTextForDetectedWords:attrString];
     } else {
-        NSMutableArray *words = (NSMutableArray *) [[string componentsSeparatedByString:@" "] mutableCopy];
+        NSMutableArray *words = (NSMutableArray *) [[text componentsSeparatedByString:@" "] mutableCopy];
         NSError *error;
         NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
 
         NSArray *mentionedWords = [self mentionedWords:words];
 
         __block NSMutableArray *wordsToSkip = [NSMutableArray array];
-        NSString *stringToCheck = [NSString stringWithString:string];
+        NSString *stringToCheck = [NSString stringWithString:text];
 
         if (mentionedWords.count > 0) {
             __block NSUInteger wordIndex = 0;
@@ -82,15 +86,15 @@
 
                     if (++wordIndex == mentionedWords.count) {
                         if ([stringToCheck isEqualToString:weakSelf.text]) {
-                            [weakSelf setAttributedText:attrString words:words wordsToSkip:wordsToSkip withString:string andRegex:regex];
+                            [weakSelf setAttributedText:attrString words:words wordsToSkip:wordsToSkip withString:text andRegex:regex];
                         } else {
-                            DLog(@"Control reused. Should not set attributedText. string: %@, stringToCheck: %@", string, stringToCheck);
+                            DLog(@"Control reused. Should not set attributedText. text: %@, stringToCheck: %@", text, stringToCheck);
                         }
                     }
                 }];
             }
         } else {
-            [self setAttributedText:attrString words:words wordsToSkip:nil withString:string andRegex:regex];
+            [self setAttributedText:attrString words:words wordsToSkip:nil withString:text andRegex:regex];
         }
     }
 }
