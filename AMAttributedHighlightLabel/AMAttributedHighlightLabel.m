@@ -100,53 +100,66 @@
     self.currentSelectedString = nil;
 
     self.text = string;
-    NSMutableArray *words = (NSMutableArray *) [[string componentsSeparatedByString:@" "] mutableCopy];
-    NSError *error;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
 
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:string];
     [attrString addAttribute:NSForegroundColorAttributeName value:self.textColor range:[string rangeOfString:string]];
 
-    NSArray *mentionedWords = [self mentionedWords:words];
-
-    __block NSMutableArray *wordsToSkip = [NSMutableArray array];
-    NSString *stringToCheck = [NSString stringWithString:string];
-
-    if (mentionedWords.count > 0) {
-        __block NSUInteger wordIndex = 0;
-        for (NSString *word in mentionedWords) {
-            __weak typeof(self) weakSelf = self;
-
-            [[SUMentionedUserManager sharedInstance] lookupUser:word completion:^(NSString *userId) {
-                if (userId == nil) {
-                    [wordsToSkip addObject:word];
-                }
-
-                if (++wordIndex == mentionedWords.count) {
-                    if ([stringToCheck isEqualToString:weakSelf.text]) {
-                        [weakSelf setAttributedText:attrString words:words wordsToSkip:wordsToSkip withString:string andRegex:regex];
-                    } else {
-                        DLog(@"Control reused. Should not set attributedText. string: %@, stringToCheck: %@", string, stringToCheck);
-                    }
-                }
-            }];
-        }
+    if (self.detectWords.count > 0) {
+        [self setAttributedTextForDetectedWords:attrString];
     } else {
-        [self setAttributedText:attrString words:words wordsToSkip:nil withString:string andRegex:regex];
+        NSMutableArray *words = (NSMutableArray *) [[string componentsSeparatedByString:@" "] mutableCopy];
+        NSError *error;
+        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
+
+        NSArray *mentionedWords = [self mentionedWords:words];
+
+        __block NSMutableArray *wordsToSkip = [NSMutableArray array];
+        NSString *stringToCheck = [NSString stringWithString:string];
+
+        if (mentionedWords.count > 0) {
+            __block NSUInteger wordIndex = 0;
+            for (NSString *word in mentionedWords) {
+                __weak typeof(self) weakSelf = self;
+
+                [[SUMentionedUserManager sharedInstance] lookupUser:word completion:^(NSString *userId) {
+                    if (userId == nil) {
+                        [wordsToSkip addObject:word];
+                    }
+
+                    if (++wordIndex == mentionedWords.count) {
+                        if ([stringToCheck isEqualToString:weakSelf.text]) {
+                            [weakSelf setAttributedText:attrString words:words wordsToSkip:wordsToSkip withString:string andRegex:regex];
+                        } else {
+                            DLog(@"Control reused. Should not set attributedText. string: %@, stringToCheck: %@", string, stringToCheck);
+                        }
+                    }
+                }];
+            }
+        } else {
+            [self setAttributedText:attrString words:words wordsToSkip:nil withString:string andRegex:regex];
+        }
     }
+}
+
+- (void)setAttributedTextForDetectedWords:(NSMutableAttributedString *)attrString
+{
+    for (NSString *word in self.detectWords) {
+        NSRange range = [self.text rangeOfString:word];
+        if (range.location != NSNotFound) {
+            [attrString addAttribute:NSForegroundColorAttributeName value:self.mentionTextColor range:range];
+            [self addToTouchableWords:word matchRange:range];
+        }
+    }
+
+    self.attributedText = attrString;
 }
 
 - (void)setAttributedText:(NSMutableAttributedString *)attrString words:(NSArray *)words wordsToSkip:(NSArray *)wordsToSkip withString:(NSString *)string andRegex:(NSRegularExpression *)regex
 {
     for (NSString *word in words) {
         if (wordsToSkip == nil || ![wordsToSkip containsObject:word]) {
-            NSString *tappableWord;
-            if (![self.detectWords containsObject:word]) {
-                NSTextCheckingResult *match = [regex firstMatchInString:word options:0 range:NSMakeRange(0, [word length])];
-                tappableWord = [word substringWithRange:match.range];
-            } else {
-                tappableWord = word;
-            }
+            NSTextCheckingResult *match = [regex firstMatchInString:word options:0 range:NSMakeRange(0, [word length])];
+            NSString *tappableWord = [word substringWithRange:match.range];
 
             if ([tappableWord length] > 0) {
                 NSRange matchRange = [string rangeOfString:word];
@@ -165,8 +178,6 @@
                 }
                 else if ([tappableWord hasPrefix:@"www."]) {
                     [attrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:matchRange];
-                } else if ([self.detectWords containsObject:tappableWord]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:self.detectedWordColor range:[string rangeOfString:tappableWord]];
                 }
 
                 [self addToTouchableWords:tappableWord matchRange:matchRange];
