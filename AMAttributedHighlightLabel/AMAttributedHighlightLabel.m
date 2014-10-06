@@ -14,22 +14,21 @@
 
 @implementation AMAttributedHighlightLabel
 
-@synthesize textColor, mentionTextColor, hashtagTextColor, linkTextColor, selectedMentionTextColor, selectedHashtagTextColor, selectedLinkTextColor;
-@synthesize delegate;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        textColor = [UIColor lightGrayColor];
-        mentionTextColor = [UIColor darkGrayColor];
-        hashtagTextColor = [UIColor darkGrayColor];
-        linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
+        self.textColor = [UIColor lightGrayColor];
+        self.mentionTextColor = [UIColor darkGrayColor];
+        self.hashtagTextColor = [UIColor darkGrayColor];
+        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
+        self.detectedWordColor = [UIColor darkGrayColor];
 
-        selectedMentionTextColor = [UIColor blackColor];
-        selectedHashtagTextColor = [UIColor blackColor];
-        selectedLinkTextColor = UIColorFromRGB(0x4099FF);
+        self.selectedMentionTextColor = [UIColor blackColor];
+        self.selectedHashtagTextColor = [UIColor blackColor];
+        self.selectedLinkTextColor = UIColorFromRGB(0x4099FF);
 
         touchableWords = [[NSMutableArray alloc] init];
         touchableLocations = [[NSMutableArray alloc] init];
@@ -44,14 +43,14 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         // Initialization code
-        textColor = [UIColor lightGrayColor];
-        mentionTextColor = [UIColor darkGrayColor];
-        hashtagTextColor = [UIColor darkGrayColor];
-        linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
+        self.textColor = [UIColor lightGrayColor];
+        self.mentionTextColor = [UIColor darkGrayColor];
+        self.hashtagTextColor = [UIColor darkGrayColor];
+        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
 
-        selectedMentionTextColor = [UIColor blackColor];
-        selectedHashtagTextColor = [UIColor blackColor];
-        selectedLinkTextColor = UIColorFromRGB(0x4099FF);
+        self.selectedMentionTextColor = [UIColor blackColor];
+        self.selectedHashtagTextColor = [UIColor blackColor];
+        self.selectedLinkTextColor = UIColorFromRGB(0x4099FF);
 
         touchableWords = [[NSMutableArray alloc] init];
         touchableLocations = [[NSMutableArray alloc] init];
@@ -66,14 +65,14 @@
     self = [super init];
     if (self) {
         // Initialization code
-        textColor = [UIColor lightGrayColor];
-        mentionTextColor = [UIColor darkGrayColor];
-        hashtagTextColor = [UIColor darkGrayColor];
-        linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
+        self.textColor = [UIColor lightGrayColor];
+        self.mentionTextColor = [UIColor darkGrayColor];
+        self.hashtagTextColor = [UIColor darkGrayColor];
+        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
 
-        selectedMentionTextColor = [UIColor blackColor];
-        selectedHashtagTextColor = [UIColor blackColor];
-        selectedLinkTextColor = UIColorFromRGB(0x4099FF);
+        self.selectedMentionTextColor = [UIColor blackColor];
+        self.selectedHashtagTextColor = [UIColor blackColor];
+        self.selectedLinkTextColor = UIColorFromRGB(0x4099FF);
 
         touchableWords = [[NSMutableArray alloc] init];
         touchableLocations = [[NSMutableArray alloc] init];
@@ -101,7 +100,7 @@
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
 
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:string];
-    [attrString addAttribute:NSForegroundColorAttributeName value:textColor range:[string rangeOfString:string]];
+    [attrString addAttribute:NSForegroundColorAttributeName value:self.textColor range:[string rangeOfString:string]];
 
     NSArray *mentionedWords = [self mentionedWords:words];
 
@@ -136,25 +135,33 @@
 {
     for (NSString *word in words) {
         if (wordsToSkip == nil || ![wordsToSkip containsObject:word]) {
-            NSTextCheckingResult *match = [regex firstMatchInString:word options:0 range:NSMakeRange(0, [word length])];
-            NSString *tappableWord = [word substringWithRange:match.range];
+            NSString *tappableWord;
+            if (![self.detectWords containsObject:word]) {
+                NSTextCheckingResult *match = [regex firstMatchInString:word options:0 range:NSMakeRange(0, [word length])];
+                tappableWord = [word substringWithRange:match.range];
+            } else {
+                tappableWord = word;
+            }
+
             if ([tappableWord length] > 0) {
                 NSRange matchRange = [string rangeOfString:word];
 
                 if ([tappableWord hasPrefix:@"@"]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:mentionTextColor range:matchRange];
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.mentionTextColor range:matchRange];
                 }
                 else if ([tappableWord hasPrefix:@"#"]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:hashtagTextColor range:matchRange];
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.hashtagTextColor range:matchRange];
                 }
                 else if ([tappableWord hasPrefix:@"http://"]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:matchRange];
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:matchRange];
                 }
                 else if ([tappableWord hasPrefix:@"https://"]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:matchRange];
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:matchRange];
                 }
                 else if ([tappableWord hasPrefix:@"www."]) {
-                    [attrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:matchRange];
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:matchRange];
+                } else if ([self.detectWords containsObject:tappableWord]) {
+                    [attrString addAttribute:NSForegroundColorAttributeName value:self.detectedWordColor range:[string rangeOfString:tappableWord]];
                 }
 
                 [self addToTouchableWords:tappableWord matchRange:matchRange];
@@ -336,15 +343,17 @@
             [newAttrString removeAttribute:NSForegroundColorAttributeName range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             NSString *string = [touchableWords objectAtIndex:i];
             if ([string hasPrefix:@"@"]) {
-                [newAttrString addAttribute:NSForegroundColorAttributeName value:selectedMentionTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedMentionTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             } else if ([string hasPrefix:@"#"]) {
-                [newAttrString addAttribute:NSForegroundColorAttributeName value:selectedHashtagTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedHashtagTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             } else if ([string hasPrefix:@"http://"]) {
-                [newAttrString addAttribute:NSForegroundColorAttributeName value:selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             } else if ([string hasPrefix:@"https://"]) {
-                [newAttrString addAttribute:NSForegroundColorAttributeName value:selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             } else if ([string hasPrefix:@"www."]) {
-                [newAttrString addAttribute:NSForegroundColorAttributeName value:selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedLinkTextColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
+            } else if ([self.detectWords containsObject:string]) {
+                [newAttrString addAttribute:NSForegroundColorAttributeName value:self.selectedDetectedWordColor range:[[touchableWordsRange objectAtIndex:i] rangeValue]];
             }
             self.attributedText = newAttrString;
 
@@ -360,15 +369,15 @@
         NSMutableAttributedString *newAttrString = [self.attributedText mutableCopy];
         [newAttrString removeAttribute:NSForegroundColorAttributeName range:currentSelectedRange];
         if ([currentSelectedString hasPrefix:@"@"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:mentionTextColor range:currentSelectedRange];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.mentionTextColor range:currentSelectedRange];
         } else if ([currentSelectedString hasPrefix:@"#"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:hashtagTextColor range:currentSelectedRange];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.hashtagTextColor range:currentSelectedRange];
         } else if ([currentSelectedString hasPrefix:@"http://"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
         } else if ([currentSelectedString hasPrefix:@"https://"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
         } else if ([currentSelectedString hasPrefix:@"www."]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
         }
         self.attributedText = newAttrString;
 
@@ -384,20 +393,23 @@
         NSMutableAttributedString *newAttrString = [self.attributedText mutableCopy];
         [newAttrString removeAttribute:NSForegroundColorAttributeName range:currentSelectedRange];
         if ([currentSelectedString hasPrefix:@"@"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:mentionTextColor range:currentSelectedRange];
-            [delegate selectedMention:currentSelectedString];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.mentionTextColor range:currentSelectedRange];
+            [self.delegate selectedMention:[SUMentionedUserManager sharedInstance].existingMentions[currentSelectedString]];
         } else if ([currentSelectedString hasPrefix:@"#"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:hashtagTextColor range:currentSelectedRange];
-            [delegate selectedHashtag:currentSelectedString];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.hashtagTextColor range:currentSelectedRange];
+            [self.delegate selectedHashtag:currentSelectedString];
         } else if ([currentSelectedString hasPrefix:@"http://"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
-            [delegate selectedLink:currentSelectedString];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
+            [self.delegate selectedLink:currentSelectedString];
         } else if ([currentSelectedString hasPrefix:@"https://"]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
-            [delegate selectedLink:currentSelectedString];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
+            [self.delegate selectedLink:currentSelectedString];
         } else if ([currentSelectedString hasPrefix:@"www."]) {
-            [newAttrString addAttribute:NSForegroundColorAttributeName value:linkTextColor range:currentSelectedRange];
-            [delegate selectedLink:currentSelectedString];
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:currentSelectedRange];
+            [self.delegate selectedLink:currentSelectedString];
+        } else if ([self.detectWords containsObject:currentSelectedString]) {
+            [newAttrString addAttribute:NSForegroundColorAttributeName value:self.detectedWordColor range:currentSelectedRange];
+            [self.delegate selectedDetectedWord:currentSelectedString];
         }
         self.attributedText = newAttrString;
 
