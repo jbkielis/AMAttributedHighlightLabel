@@ -9,11 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CoreText/CoreText.h>
 
-#define UIColorFromRGB(rgbValue) [UIColor \
-colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 \
-green:((float)((rgbValue & 0xFF00) >> 8))/255.0 \
-blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-
 @protocol AMAttributedHighlightLabelDelegate
 
 @optional
@@ -25,14 +20,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @interface AMAttributedHighlightLabel : UILabel
 
-@property(strong,nonatomic) UIColor *mentionTextColor;
-@property(strong,nonatomic) UIColor *hashtagTextColor;
 @property(strong,nonatomic) UIColor *linkTextColor;
-@property(nonatomic, strong) UIColor *detectedWordColor;
-@property(strong,nonatomic) UIColor *selectedMentionTextColor;
-@property(strong,nonatomic) UIColor *selectedHashtagTextColor;
 @property(strong,nonatomic) UIColor *selectedLinkTextColor;
-@property(nonatomic, strong) UIColor *selectedDetectedWordColor;
 
 @property(nonatomic, strong) NSArray *detectWords;
 @property(nonatomic) BOOL shouldHighlightLabel;
