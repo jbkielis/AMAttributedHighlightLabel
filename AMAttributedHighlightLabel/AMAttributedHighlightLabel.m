@@ -44,10 +44,6 @@
 
 - (void)setText:(NSString *)text
 {
-    if ([self.text isEqualToString:text]) {
-        return;
-    }
-
     [self.touchableWords removeAllObjects];
     [self.touchableWordsRange removeAllObjects];
     [self.touchableLocations removeAllObjects];
