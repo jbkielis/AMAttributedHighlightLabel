@@ -19,52 +19,6 @@
 
 @implementation AMAttributedHighlightLabel
 
-
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        self.textColor = [UIColor lightGrayColor];
-        self.mentionTextColor = [UIColor darkGrayColor];
-        self.hashtagTextColor = [UIColor darkGrayColor];
-        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
-        self.detectedWordColor = [UIColor darkGrayColor];
-
-        self.selectedMentionTextColor = [UIColor blackColor];
-        self.selectedHashtagTextColor = [UIColor blackColor];
-        self.selectedLinkTextColor = UIColorFromRGB(0x4099FF);
-
-        self.touchableWords = [[NSMutableArray alloc] init];
-        self.touchableLocations = [[NSMutableArray alloc] init];
-        self.touchableWordsRange = [[NSMutableArray alloc] init];
-        self.text = @"";
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        // Initialization code
-        self.textColor = [UIColor lightGrayColor];
-        self.mentionTextColor = [UIColor darkGrayColor];
-        self.hashtagTextColor = [UIColor darkGrayColor];
-        self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
-
-        self.selectedMentionTextColor = [UIColor blackColor];
-        self.selectedHashtagTextColor = [UIColor blackColor];
-        self.selectedLinkTextColor = UIColorFromRGB(0x4099FF);
-
-        self.touchableWords = [[NSMutableArray alloc] init];
-        self.touchableLocations = [[NSMutableArray alloc] init];
-        self.touchableWordsRange = [[NSMutableArray alloc] init];
-        self.text = @"";
-    }
-    return self;
-}
-
 - (id)init
 {
     self = [super init];
@@ -83,6 +37,7 @@
         self.touchableLocations = [[NSMutableArray alloc] init];
         self.touchableWordsRange = [[NSMutableArray alloc] init];
         self.text = @"";
+        self.shouldHighlightLabel = YES;
     }
 
     return self;
@@ -100,6 +55,10 @@
     self.currentSelectedString = nil;
 
     self.text = string;
+
+    if (!self.shouldHighlightLabel) {
+        return;
+    }
 
     NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString:string];
     [attrString addAttribute:NSForegroundColorAttributeName value:self.textColor range:[string rangeOfString:string]];

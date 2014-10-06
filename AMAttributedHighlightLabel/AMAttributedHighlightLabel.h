@@ -25,7 +25,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @interface AMAttributedHighlightLabel : UILabel
 
-@property(strong,nonatomic) UIColor *textColor;
 @property(strong,nonatomic) UIColor *mentionTextColor;
 @property(strong,nonatomic) UIColor *hashtagTextColor;
 @property(strong,nonatomic) UIColor *linkTextColor;
@@ -36,6 +35,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 @property(nonatomic, strong) UIColor *selectedDetectedWordColor;
 
 @property(nonatomic, strong) NSArray *detectWords;
+@property(nonatomic) BOOL shouldHighlightLabel;
 
 @property (nonatomic, weak) id <AMAttributedHighlightLabelDelegate> delegate;
 
