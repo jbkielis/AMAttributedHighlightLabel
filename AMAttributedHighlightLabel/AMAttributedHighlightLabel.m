@@ -24,7 +24,7 @@
     self = [super init];
     if (self) {
         // Initialization code
-        self.textColor = [UIColor lightGrayColor];
+        self.textColor = [UIColor blackColor];
         self.linkTextColor = [UIColor colorWithRed:129.0 / 255.0 green:171.0 / 255.0 blue:193.0 / 255.0 alpha:1.0];
         self.selectedLinkTextColor = [UIColor blackColor];
 
