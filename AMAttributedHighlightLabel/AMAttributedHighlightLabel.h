@@ -23,14 +23,7 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 - (void)selectedDetectedWord:(NSString *)string;
 @end
 
-@interface AMAttributedHighlightLabel : UILabel {
-    NSMutableArray *touchableWords;
-    NSMutableArray *touchableWordsRange;
-    NSMutableArray *touchableLocations;
-    
-    NSRange currentSelectedRange;
-    NSString *currentSelectedString;
-}
+@interface AMAttributedHighlightLabel : UILabel
 
 @property(strong,nonatomic) UIColor *textColor;
 @property(strong,nonatomic) UIColor *mentionTextColor;
