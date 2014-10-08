@@ -23,7 +23,7 @@
 {
     self = [super init];
     if (self) {
-        self.lineBreakMode = NSLineBreakByCharWrapping;
+        self.lineBreakMode = NSLineBreakByWordWrapping;
         self.numberOfLines = 0;
         self.userInteractionEnabled = YES;
 
