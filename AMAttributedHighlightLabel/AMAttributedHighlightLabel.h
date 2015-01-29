@@ -25,6 +25,7 @@
 
 @property(nonatomic, strong) NSArray *detectWords;
 @property(nonatomic) BOOL shouldHighlightLabel;
+@property(strong,nonatomic) NSRegularExpression *regex;
 
 @property (nonatomic, weak) id <AMAttributedHighlightLabelDelegate> delegate;
 

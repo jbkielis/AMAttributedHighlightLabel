@@ -42,6 +42,8 @@
 		71CF266E16A2D15300A3231C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		71CF267616A2D22700A3231C /* AMAttributedHighlightLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMAttributedHighlightLabel.h; sourceTree = "<group>"; };
 		71CF267716A2D22700A3231C /* AMAttributedHighlightLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AMAttributedHighlightLabel.m; sourceTree = "<group>"; };
+		8C4747C81A7A303200F8FC28 /* SUMentionedUserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SUMentionedUserManager.h; sourceTree = "<group>"; };
+		8C4747C91A7A303200F8FC28 /* SUMentionedUserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SUMentionedUserManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,8 @@
 			children = (
 				71CF267616A2D22700A3231C /* AMAttributedHighlightLabel.h */,
 				71CF267716A2D22700A3231C /* AMAttributedHighlightLabel.m */,
+				8C4747C81A7A303200F8FC28 /* SUMentionedUserManager.h */,
+				8C4747C91A7A303200F8FC28 /* SUMentionedUserManager.m */,
 			);
 			path = AMAttributedHighlightLabel;
 			sourceTree = SOURCE_ROOT;

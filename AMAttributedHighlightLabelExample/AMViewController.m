@@ -23,7 +23,8 @@
     tweetLabel.userInteractionEnabled = YES;
     tweetLabel.numberOfLines = 0;
     tweetLabel.lineBreakMode = NSLineBreakByCharWrapping;
-    [tweetLabel setString:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class"];
+    tweetLabel.shouldHighlightLabel = YES;
+    [tweetLabel setText:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class"];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 

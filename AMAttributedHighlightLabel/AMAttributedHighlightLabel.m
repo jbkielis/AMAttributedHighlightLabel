@@ -7,7 +7,7 @@
 //
 
 #import "AMAttributedHighlightLabel.h"
-#import "SUMentionedUserManager.h"
+//#import "SUMentionedUserManager.h"
 
 @interface AMAttributedHighlightLabel ()
 @property(nonatomic, strong) NSMutableArray *touchableWords;
@@ -19,7 +19,17 @@
 
 @implementation AMAttributedHighlightLabel
 
-- (id)init
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self commonInit];
+    }
+    
+    return self;
+}
+
+- (instancetype)init
 {
     self = [super init];
     if (self) {
@@ -27,19 +37,27 @@
         self.numberOfLines = 0;
         self.userInteractionEnabled = YES;
 
-        // Initialization code
-        self.textColor = [UIColor blackColor];
-        self.linkTextColor = [UIColor colorWithRed:255.0 / 255.0 green:103.0 / 255.0 blue:65.0 / 255.0 alpha:1.0];
-        self.selectedLinkTextColor = [self.linkTextColor colorWithAlphaComponent:0.20f];
-
-        self.touchableWords = [[NSMutableArray alloc] init];
-        self.touchableLocations = [[NSMutableArray alloc] init];
-        self.touchableWordsRange = [[NSMutableArray alloc] init];
-        self.text = @"";
-        self.shouldHighlightLabel = YES;
+        [self commonInit];
     }
 
     return self;
+}
+
+- (void)commonInit
+{
+    // Initialization code
+    self.textColor = [UIColor blackColor];
+    self.linkTextColor = [UIColor colorWithRed:255.0 / 255.0 green:103.0 / 255.0 blue:65.0 / 255.0 alpha:1.0];
+    self.selectedLinkTextColor = [self.linkTextColor colorWithAlphaComponent:0.20f];
+    
+    self.touchableWords = [[NSMutableArray alloc] init];
+    self.touchableLocations = [[NSMutableArray alloc] init];
+    self.touchableWordsRange = [[NSMutableArray alloc] init];
+    self.text = @"";
+    self.shouldHighlightLabel = YES;
+    
+    NSError *error;
+    self.regex = [NSRegularExpression regularExpressionWithPattern:@"(@|#|(http|https)://)([\\w]+)" options:NSRegularExpressionCaseInsensitive error:&error];
 }
 
 - (void)setText:(NSString *)text
@@ -61,37 +79,8 @@
     if (self.detectWords.count > 0) {
         [self setAttributedTextForDetectedWords:attrString];
     } else {
-        NSMutableArray *words = (NSMutableArray *) [[text componentsSeparatedByString:@" "] mutableCopy];
-        NSError *error;
-        NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((@|#)([A-Z0-9a-z(é|ë|ê|è|à|â|ä|á|ù|ü|û|ú|ì|ï|î|í)_]+))|(http(s)?://([A-Z0-9a-z._-]*(/)?)*)" options:NSRegularExpressionCaseInsensitive error:&error];
-
-        NSArray *mentionedWords = [self mentionedWords:words];
-
-        __block NSMutableArray *wordsToSkip = [NSMutableArray array];
-        NSString *stringToCheck = [NSString stringWithString:text];
-
-        if (mentionedWords.count > 0) {
-            __block NSUInteger wordIndex = 0;
-            for (NSString *word in mentionedWords) {
-                __weak typeof(self) weakSelf = self;
-
-                [[SUMentionedUserManager sharedInstance] lookupUser:word completion:^(NSString *userId) {
-                    if (userId == nil) {
-                        [wordsToSkip addObject:word];
-                    }
-
-                    if (++wordIndex == mentionedWords.count) {
-                        if ([stringToCheck isEqualToString:weakSelf.text]) {
-                            [weakSelf setAttributedText:attrString words:words wordsToSkip:wordsToSkip withString:text andRegex:regex];
-                        } else {
-                            DLog(@"Control reused. Should not set attributedText. text: %@, stringToCheck: %@", text, stringToCheck);
-                        }
-                    }
-                }];
-            }
-        } else {
-            [self setAttributedText:attrString words:words wordsToSkip:nil withString:text andRegex:regex];
-        }
+        NSMutableArray *words = [[text componentsSeparatedByString:@" "] mutableCopy];
+        [self setAttributedText:attrString words:words wordsToSkip:nil withString:text andRegex:self.regex];
     }
 }
 
@@ -329,7 +318,7 @@
         [newAttrString addAttribute:NSForegroundColorAttributeName value:self.linkTextColor range:self.currentSelectedRange];
 
         if ([self.currentSelectedString hasPrefix:@"@"]) {
-            [self.delegate selectedMention:[SUMentionedUserManager sharedInstance].existingMentions[self.currentSelectedString]];
+            [self.delegate selectedMention:self.currentSelectedString];
         } else if ([self.currentSelectedString hasPrefix:@"#"]) {
             [self.delegate selectedHashtag:self.currentSelectedString];
         } else if ([self.currentSelectedString hasPrefix:@"http://"]) {
