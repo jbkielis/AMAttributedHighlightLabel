@@ -24,7 +24,7 @@
     tweetLabel.numberOfLines = 0;
     tweetLabel.lineBreakMode = NSLineBreakByCharWrapping;
     tweetLabel.shouldHighlightLabel = YES;
-    [tweetLabel setText:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class that includes a deeplink twitter://timeline"];
+    [tweetLabel setText:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class that includes a deeplink twitter://timeline and better hyperlink support http://www.google.com www.apple.com"];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 

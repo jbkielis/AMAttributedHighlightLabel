@@ -57,7 +57,7 @@
     self.shouldHighlightLabel = YES;
     
     NSError *error;
-    self.regex = [NSRegularExpression regularExpressionWithPattern:@"(@|#|(http|https)|(.+)://)([\\w]+)" options:NSRegularExpressionCaseInsensitive error:&error];
+    self.regex = [NSRegularExpression regularExpressionWithPattern:@"(@|#|(http|https|(.+))://|www)(.+)" options:NSRegularExpressionCaseInsensitive error:&error];
 }
 
 - (void)setText:(NSString *)text
