@@ -326,7 +326,7 @@
         } else if ([self.currentSelectedString hasPrefix:@"https://"]) {
             [self.delegate selectedLink:self.currentSelectedString];
         } else if ([self.currentSelectedString hasPrefix:@"www."]) {
-            [self.delegate selectedLink:self.currentSelectedString];
+            [self.delegate selectedLink:[NSString stringWithFormat:@"http://%@", self.currentSelectedString]];
         } else if ([self.currentSelectedString containsString:@"://"]) {
             [self.delegate selectDeepLink:self.currentSelectedString];
         } else if ([self.detectWords containsObject:self.currentSelectedString]) {
