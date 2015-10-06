@@ -16,6 +16,7 @@
 - (void)selectedHashtag:(NSString *)string;
 - (void)selectedLink:(NSString *)string;
 - (void)selectedDetectedWord:(NSString *)string;
+- (void)selectDeepLink:(NSString *)string;
 @end
 
 @interface AMAttributedHighlightLabel : UILabel

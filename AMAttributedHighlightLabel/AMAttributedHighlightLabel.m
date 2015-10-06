@@ -57,7 +57,7 @@
     self.shouldHighlightLabel = YES;
     
     NSError *error;
-    self.regex = [NSRegularExpression regularExpressionWithPattern:@"(@|#|(http|https)://)([\\w]+)" options:NSRegularExpressionCaseInsensitive error:&error];
+    self.regex = [NSRegularExpression regularExpressionWithPattern:@"(@|#|(http|https)|(.+)://)([\\w]+)" options:NSRegularExpressionCaseInsensitive error:&error];
 }
 
 - (void)setText:(NSString *)text
@@ -327,6 +327,8 @@
             [self.delegate selectedLink:self.currentSelectedString];
         } else if ([self.currentSelectedString hasPrefix:@"www."]) {
             [self.delegate selectedLink:self.currentSelectedString];
+        } else if ([self.currentSelectedString containsString:@"://"]) {
+            [self.delegate selectDeepLink:self.currentSelectedString];
         } else if ([self.detectWords containsObject:self.currentSelectedString]) {
             [self.delegate selectedDetectedWord:self.currentSelectedString];
         }

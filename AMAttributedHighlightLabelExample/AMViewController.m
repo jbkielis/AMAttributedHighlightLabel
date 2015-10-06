@@ -24,20 +24,25 @@
     tweetLabel.numberOfLines = 0;
     tweetLabel.lineBreakMode = NSLineBreakByCharWrapping;
     tweetLabel.shouldHighlightLabel = YES;
-    [tweetLabel setText:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class"];
+    [tweetLabel setText:@"This #is a @test for my #@new http://AMAttributedHighlightLabel.class that includes a deeplink twitter://timeline"];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
 - (void)selectedMention:(NSString *)string {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected Mention" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 }
 - (void)selectedHashtag:(NSString *)string {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected Hashtag" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 }
 - (void)selectedLink:(NSString *)string {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected Link" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+}
+
+- (void)selectDeepLink:(NSString *)string {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Selected Deeplink" message:string delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 }
 
