@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'AMAttributedHighlightLabel'
-  s.version      = '0.0.4'
+  s.version      = '0.0.5'
   s.platform    = :ios, '6.0'
   s.license      = {
     :type => 'MIT License',
@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   s.homepage     = 'https://github.com/rootd/AMAttributedHighlightLabel'
   s.summary      = 'A UILabel subclass with mention/hashtag/link highlighting.'
   s.author       = 'Alexander Meiler'
-  s.source       = { :git => 'https://github.com/rnaharro/AMAttributedHighlightLabel.git', :tag => '0.0.4' }
+  s.source       = { :git => 'https://github.com/jbkielis/AMAttributedHighlightLabel.git', :tag => '0.0.5' }
   s.source_files = 'AMAttributedHighlightLabel/*.{h,m}'
   s.requires_arc = true
   s.framework      = 'CoreText'
